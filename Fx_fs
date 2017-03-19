@@ -1,0 +1,35 @@
+Sub fetchBBGData()
+
+Inl_R = 3 'Initial Row Number
+Inl_C = 6 'Initial Column Number
+No_Fld = 4 'The Number of Fields
+No_Bdp = 6 ' The position of the string of the cell in the string of the BDP function, assuming both column and row are single character
+No_Int = No_Fld + 1 'The Number of Interval Columns
+
+For i = 2 To 39
+' Before uncommenting msgbox(), reduce the iteration number!
+Cur_C = Inl_C + (i - 2) * No_Int
+
+' Set tickers
+Ticker = Worksheets("list").Cells(i, 1).Value ' MsgBox (ticker)
+Worksheets("fs").Cells(Inl_R, Inl_C + (i - 2) * No_Int).Value = Ticker
+
+With Sheets("fs")
+' Set fildes
+.Range(.Cells(Inl_R + 1, Inl_C + (i - 2) * No_Int), _
+                       .Cells(Inl_R + 1, Inl_C + (i - 1) * No_Int - 2)).Value = _
+.Range(.Cells(Inl_R + 1, 1), _
+                       .Cells(Inl_R + 1, No_Int - 1)).Value
+
+' Set the cells of bdp function
+Dim Fml, Str As String
+Str = .Cells(Inl_R + 2, 1).Formula
+Fml = Left(Str, No_Bdp - 1) & _
+    .Cells(Inl_R, Cur_C).Address(RowAbsolute:=True, ColumnAbsolute:=False) & _
+    Right(Str, Len(Str) - No_Bdp - 2) 'MsgBox (Fml)
+.Cells(Inl_R + 2, Cur_C).Value = Fml
+End With
+
+Next i
+
+End Sub
